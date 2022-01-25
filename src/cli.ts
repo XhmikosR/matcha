@@ -7,8 +7,7 @@ import { resolve } from 'path';
 import { grepMiddleware } from './middleware/grep';
 import { cpuProfiler } from './middleware/cpu-profiler';
 import { IBenchmarkCase } from './suite';
-import { promisify } from 'util';
-import { writeFile } from 'fs';
+import { promises as fs } from 'fs';
 import { EOL } from 'os';
 
 interface IArgs {
@@ -76,7 +75,7 @@ function benchmarkFiles() {
 
 function writeProfile(bench: Readonly<IBenchmarkCase>, profile: object) {
   const safeName = bench.name.replace(/[^a-z0-9]/gi, '-');
-  promisify(writeFile)(`${safeName}.cpuprofile`, JSON.stringify(profile));
+  fs.writeFile(`${safeName}.cpuprofile`, JSON.stringify(profile));
 }
 
 function printReporters() {
