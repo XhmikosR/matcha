@@ -1,14 +1,14 @@
-import { Benchmark, IReporter, IReporterFactory } from '.';
-import chalk from 'chalk';
 import { moveCursor, clearLine } from 'readline';
 import { EOL } from 'os';
+import chalk from 'chalk';
+import { Benchmark, IReporter, IReporterFactory } from '.';
+
+const center = 30;
 
 export const prettyFactory: IReporterFactory = {
   description: 'Pretty prints results to the console',
   start: () => new PrettyReporter(process.stdout),
 };
-
-const center = 30;
 
 export class PrettyReporter implements IReporter {
   private readonly numberFormat = Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 });
@@ -27,8 +27,9 @@ export class PrettyReporter implements IReporter {
     this.results.push(newResult);
     moveCursor(this.out, 0, -this.results.length);
 
-    let minHz = Infinity;
+    let minHz = Number.POSITIVE_INFINITY;
     let maxHz = 0;
+
     for (const benchmark of this.results) {
       if (benchmark.hz) {
         minHz = Math.min(minHz, benchmark.hz);
@@ -54,8 +55,9 @@ export class PrettyReporter implements IReporter {
   }
 
   onComplete() {
-    const cases = this.results.slice();
-    const error = cases.find((c) => !!c.error);
+    const cases = [...this.results];
+    const error = cases.find((c) => Boolean(c.error));
+
     if (error) {
       this.out.write(chalk.red(error.error.stack));
       return;

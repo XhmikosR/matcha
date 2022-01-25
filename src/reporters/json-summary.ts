@@ -1,5 +1,5 @@
-import { Benchmark, IReporter, IReporterFactory } from '.';
 import { EOL } from 'os';
+import { Benchmark, IReporter, IReporterFactory } from '.';
 
 type JsonResult = {
   name: string;
@@ -36,7 +36,7 @@ export class JsonSummaryReporter implements IReporter {
     const results: JsonResult[] = [];
     const errors: JsonError[] = [];
 
-    let minHz = Infinity;
+    let minHz = Number.POSITIVE_INFINITY;
     let maxHz = 0;
     let elapsed = 0;
     let fastest: Benchmark | undefined;

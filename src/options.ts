@@ -89,7 +89,7 @@ export class Options implements IOptions {
   /**
    * Creates a new set of options by merging the `other` onto these ones.
    */
-  public merge(other?: IOptions): Options {
+  public merge(other?: IOptions): this {
     if (!other) {
       return this;
     }
@@ -100,32 +100,30 @@ export class Options implements IOptions {
         next[key] = this[key];
       }
 
-      if (!other.hasOwnProperty(key)) {
-        continue;
-      }
+      if (!other.hasOwnProperty(key)) continue;
 
       switch (key) {
-        case 'setup':
-          {
-            const outerFn = this[key];
-            const innerFn = other[key];
-            next[key] = async () => {
-              outerFn && (await runMaybeAsync(outerFn));
-              innerFn && (await runMaybeAsync(innerFn));
-            };
-          }
-          break;
+        case 'setup': {
+          const outerFn = this[key];
+          const innerFn = other[key];
+          next[key] = async () => {
+            if (outerFn) await runMaybeAsync(outerFn);
+            if (innerFn) await runMaybeAsync(innerFn);
+          };
 
-        case 'teardown':
-          {
-            const outerFn = this[key];
-            const innerFn = other[key];
-            next[key] = async () => {
-              innerFn && (await runMaybeAsync(innerFn));
-              outerFn && (await runMaybeAsync(outerFn));
-            };
-          }
           break;
+        }
+
+        case 'teardown': {
+          const outerFn = this[key];
+          const innerFn = other[key];
+          next[key] = async () => {
+            if (innerFn) await runMaybeAsync(innerFn);
+            if (outerFn) await runMaybeAsync(outerFn);
+          };
+
+          break;
+        }
 
         case 'onComplete':
         case 'onCycle':
@@ -138,6 +136,7 @@ export class Options implements IOptions {
             innerFn?.(arg);
             outerFn?.(arg);
           };
+
           break;
         }
 

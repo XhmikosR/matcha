@@ -1,16 +1,18 @@
+import Benchmark from 'benchmark';
 import { MaybeAsync, IDeferred, returnsPromiseLike, runMaybeAsync } from './async';
 import { Options } from './options';
 import { Middleware } from './runner';
-import Benchmark from 'benchmark';
 
 /**
  * Method used for running benchmarks. Can be stubbed in tests.
  */
 export type RunFunction = (name: string, options: Options) => Promise<void>;
 
-const defaultRunFn: RunFunction = (name, options) => {
+const defaultRunFn: RunFunction = async (name, options) => {
   const bench = new Benchmark(name, options.fn!, options);
-  const prom = new Promise<void>((resolve) => bench.on('complete', resolve));
+  const prom = new Promise<void>((resolve) => {
+    bench.on('complete', resolve);
+  });
   bench.run();
   return prom;
 };
@@ -30,8 +32,14 @@ const installBenchFn = (fn: MaybeAsync, options: Options) => {
   if (fn.length > 0) {
     return options.merge({
       defer: true,
-      fn: (deferred: IDeferred) => {
-        fn((err) => (err ? deferred.reject(err) : deferred.resolve(undefined)));
+      fn(deferred: IDeferred) {
+        fn((err) => {
+          if (err) {
+            deferred.reject(err);
+          } else {
+            deferred.resolve(undefined);
+          }
+        });
       },
     });
   }
@@ -39,10 +47,14 @@ const installBenchFn = (fn: MaybeAsync, options: Options) => {
   if (returnsPromiseLike(fn)) {
     return options.merge({
       defer: true,
-      fn: (deferred: IDeferred) => {
+      fn(deferred: IDeferred) {
         fn()!
-          .then(() => deferred.resolve(undefined))
-          .catch((err) => deferred.reject(err));
+          .then(() => {
+            deferred.resolve(undefined);
+          })
+          .catch((error) => {
+            deferred.reject(error);
+          });
       },
     });
   }
@@ -50,16 +62,16 @@ const installBenchFn = (fn: MaybeAsync, options: Options) => {
   return options.merge({ fn: fn as () => void });
 };
 
-const runMiddleware = (
+const runMiddleware = async (
   bench: Readonly<IBenchmarkCase>,
   stack: ReadonlyArray<Middleware>,
   offset = 0,
 ): Promise<void> => {
   if (stack.length === offset) {
-    return Promise.resolve();
+    return;
   }
 
-  return stack[offset](bench, (b) => runMiddleware(b, stack, offset + 1));
+  return stack[offset](bench, async (b) => runMiddleware(b, stack, offset + 1));
 };
 
 /**

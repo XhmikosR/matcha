@@ -18,10 +18,10 @@
     "prepublishOnly": "npm run compile",
     "compile": "tsc",
     "watch": "tsc --watch",
-    "test:fmt": "prettier --list-different \"src/**/*.ts\" \"*.md\"",
+    "test:fmt": "prettier --list-different \"src/**/*.ts\" example.js \"*.md\"",
     "test:unit": "mocha dist/**/*.test.js",
     "test": "npm run test:unit && npm run test:fmt",
-    "fmt": "prettier --write \"src/**/*.ts\" \"*.md\""
+    "fmt": "prettier --write \"src/**/*.ts\" example.js \"*.md\""
   },
   "author": "Connor Peet <connor@peet.io>",
   "license": "MIT",

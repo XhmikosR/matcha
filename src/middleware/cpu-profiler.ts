@@ -1,7 +1,7 @@
-import { Middleware } from '../runner';
-import { grepMatches } from './grep';
 import { Session } from 'inspector';
+import { Middleware } from '../runner';
 import { IBenchmarkCase } from '../suite';
+import { grepMatches } from './grep';
 
 let session: Session | undefined;
 let enabledProfiler = false;
@@ -15,26 +15,26 @@ const getSession = () => {
   return session;
 };
 
-const postAsync = <R = unknown>(method: string, params?: {}) =>
-  new Promise<R>((resolve, reject) =>
+const postAsync = async <R = unknown>(method: string, params?: {}) => {
+  return new Promise<R>((resolve, reject) => {
     getSession().post(method, params, (err, result) => {
       if (err) {
         reject(err);
       } else {
         resolve(result as R);
       }
-    }),
-  );
+    });
+  });
+};
 
 /**
  * A middleware that runs a CPU profile benchmarks.
  */
-export const cpuProfiler =
-  (
-    onResult: (bench: Readonly<IBenchmarkCase>, profile: object) => Promise<void> | void,
-    include?: string | RegExp,
-  ): Middleware =>
-  async (bench, next) => {
+export const cpuProfiler = (
+  onResult: (bench: Readonly<IBenchmarkCase>, profile: object) => Promise<void> | void,
+  include?: string | RegExp,
+): Middleware => {
+  return async (bench, next) => {
     if (include && !grepMatches(include, bench.name)) {
       return next(bench);
     }
@@ -50,3 +50,4 @@ export const cpuProfiler =
     const { profile } = await postAsync<{ profile: object }>('Profiler.stop');
     await onResult(bench, profile);
   };
+};

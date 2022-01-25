@@ -79,8 +79,12 @@ export async function benchmark({
   middleware,
 }: IBenchmarkOptions): Promise<void> {
   const suite = new MatchaSuite(runFunction);
-  const retainSymbol = Symbol();
-  let scope = { prefix: '', middleware: middleware?.slice() ?? [], options: Options.empty };
+  const retainSymbol = Symbol('retain symbol');
+  let scope = {
+    prefix: '',
+    middleware: middleware?.slice() ?? [],
+    options: Options.empty,
+  };
 
   scope.middleware.push(reporterMiddleware(reporter));
 

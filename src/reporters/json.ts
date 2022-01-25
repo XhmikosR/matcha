@@ -1,5 +1,5 @@
-import { Benchmark, IReporter, IReporterFactory } from '.';
 import { EOL } from 'os';
+import { Benchmark, IReporter, IReporterFactory } from '.';
 
 export const jsonFactory: IReporterFactory = {
   description: 'Outputs stats as raw JSON',

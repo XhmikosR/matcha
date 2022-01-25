@@ -1,32 +1,33 @@
+import { promisify } from 'util';
+import { expect } from 'chai';
 import { benchmark } from './runner';
 import { IOptions } from './options';
 import { GatherReporter } from './reporters/gather';
-import { expect } from 'chai';
-import { promisify } from 'util';
 import { grepMiddleware } from './middleware/grep';
 
 const timeout = promisify(setTimeout);
+
+const noop = () => {};
 
 // There's really no other test setup I could use for a project
 // called matcha but mocha and chai
 
 describe('runner', () => {
   it('sets options correctly', async () => {
-    let results: [string, IOptions][] = [];
+    const results: [string, IOptions][] = [];
     await benchmark({
       reporter: new GatherReporter(),
-      runFunction(name, options) {
+      async runFunction(name, options) {
         const { maxTime, initCount } = options;
         results.push([name, { maxTime, initCount }]);
-        return Promise.resolve();
       },
       prepare(api) {
         api.set('maxTime', 1);
-        api.bench('a', () => {});
-        api.bench('aaa', () => {});
+        api.bench('a', noop);
+        api.bench('aaa', noop);
         api.suite('aSuite', () => {
           api.set('initCount', 100);
-          api.bench('c', () => {});
+          api.bench('c', noop);
         });
       },
     });
@@ -39,19 +40,18 @@ describe('runner', () => {
   });
 
   it('greps for tests', async () => {
-    let results: string[] = [];
+    const results: string[] = [];
     await benchmark({
       middleware: [grepMiddleware(/^a/)],
       reporter: new GatherReporter(),
-      runFunction(name) {
+      async runFunction(name) {
         results.push(name);
-        return Promise.resolve();
       },
       prepare(api) {
-        api.bench('a', () => {});
-        api.bench('b', () => {});
-        api.bench('aaa', () => {});
-        api.bench('ba', () => {});
+        api.bench('a', noop);
+        api.bench('b', noop);
+        api.bench('aaa', noop);
+        api.bench('ba', noop);
       },
     });
 
@@ -59,20 +59,19 @@ describe('runner', () => {
   });
 
   it('handles lifecycle correctly', async () => {
-    let results: string[] = [];
+    const results: string[] = [];
     await benchmark({
       reporter: new GatherReporter(),
-      runFunction() {
+      async runFunction() {
         results.push('bench');
-        return Promise.resolve();
       },
       prepare(api) {
-        api.set('setup', () => {
+        api.set('setup', async () => {
           results.push('in a');
           return timeout(1);
         });
 
-        api.set('teardown', () => {
+        api.set('teardown', async () => {
           results.push('out a');
           return timeout(1);
         });
@@ -89,15 +88,19 @@ describe('runner', () => {
           api.suite('c', () => {
             api.set('setup', (callback) => {
               results.push('in c');
-              setTimeout(() => callback(null), 1);
+              setTimeout(() => {
+                callback(null);
+              }, 1);
             });
 
             api.set('teardown', (callback) => {
               results.push('out c');
-              setTimeout(() => callback(null), 1);
+              setTimeout(() => {
+                callback(null);
+              }, 1);
             });
 
-            api.bench('', () => {});
+            api.bench('', noop);
           });
         });
       },
@@ -107,7 +110,7 @@ describe('runner', () => {
   });
 
   it('runs e2e', async function () {
-    this.timeout(10000);
+    this.timeout(10_000);
 
     const reporter = new GatherReporter();
     const obj1 = { a: 1, b: 2, c: 3 };
@@ -116,8 +119,12 @@ describe('runner', () => {
       reporter,
       prepare(api) {
         api.set('maxTime', 0.5);
-        api.bench('deepEqual', () => expect(obj1).to.deep.equal(obj2));
-        api.bench('strictEqual', () => expect(obj1).to.equal(obj1));
+        api.bench('deepEqual', () => {
+          expect(obj1).to.deep.equal(obj2);
+        });
+        api.bench('strictEqual', () => {
+          expect(obj1).to.equal(obj1);
+        });
       },
     });
 

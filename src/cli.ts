@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
+import { resolve } from 'path';
+import { promises as fs } from 'fs';
+import { EOL } from 'os';
 import program from 'commander';
 import { reporters } from './reporters';
 import { benchmark, Middleware } from './runner';
-import { resolve } from 'path';
 import { grepMiddleware } from './middleware/grep';
 import { cpuProfiler } from './middleware/cpu-profiler';
 import { IBenchmarkCase } from './suite';
-import { promises as fs } from 'fs';
-import { EOL } from 'os';
 
 interface IArgs {
   reporters?: boolean;
@@ -35,7 +35,7 @@ const args = program
 
 if (args.reporters) {
   printReporters();
-} else if (!program.args.length) {
+} else if (program.args.length === 0) {
   program.help();
 } else {
   benchmarkFiles();
@@ -64,7 +64,7 @@ function benchmarkFiles() {
   benchmark({
     middleware,
     reporter: reporterFactory.start(),
-    prepare: (api) => {
+    prepare(api) {
       Object.assign(global, api);
       for (const file of program.args) {
         require(resolve(process.cwd(), file));
@@ -73,9 +73,9 @@ function benchmarkFiles() {
   });
 }
 
-function writeProfile(bench: Readonly<IBenchmarkCase>, profile: object) {
+async function writeProfile(bench: Readonly<IBenchmarkCase>, profile: object) {
   const safeName = bench.name.replace(/[^a-z0-9]/gi, '-');
-  fs.writeFile(`${safeName}.cpuprofile`, JSON.stringify(profile));
+  await fs.writeFile(`${safeName}.cpuprofile`, JSON.stringify(profile));
 }
 
 function printReporters() {
