@@ -87,12 +87,12 @@ describe('runner', () => {
           });
 
           api.suite('c', () => {
-            api.set('setup', callback => {
+            api.set('setup', (callback) => {
               results.push('in c');
               setTimeout(() => callback(null), 1);
             });
 
-            api.set('teardown', callback => {
+            api.set('teardown', (callback) => {
               results.push('out c');
               setTimeout(() => callback(null), 1);
             });
@@ -106,7 +106,7 @@ describe('runner', () => {
     expect(results).to.deep.equal(['in a', 'in b', 'in c', 'bench', 'out c', 'out b', 'out a']);
   });
 
-  it('runs e2e', async function() {
+  it('runs e2e', async function () {
     this.timeout(10000);
 
     const reporter = new GatherReporter();

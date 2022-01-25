@@ -7,5 +7,7 @@ export const grepMatches = (pattern: string | RegExp, name: string) =>
  * A middleware that only runs benchmark cases matching
  * the given pattern.
  */
-export const grepMiddleware = (pattern: string | RegExp): Middleware => (bench, next) =>
-  grepMatches(pattern, bench.name) ? next(bench) : Promise.resolve();
+export const grepMiddleware =
+  (pattern: string | RegExp): Middleware =>
+  (bench, next) =>
+    grepMatches(pattern, bench.name) ? next(bench) : Promise.resolve();

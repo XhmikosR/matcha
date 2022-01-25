@@ -55,7 +55,7 @@ export class PrettyReporter implements IReporter {
 
   onComplete() {
     const cases = this.results.slice();
-    const error = cases.find(c => !!c.error);
+    const error = cases.find((c) => !!c.error);
     if (error) {
       this.out.write(chalk.red(error.error.stack));
       return;

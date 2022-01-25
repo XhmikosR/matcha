@@ -65,7 +65,7 @@ function benchmarkFiles() {
   benchmark({
     middleware,
     reporter: reporterFactory.start(),
-    prepare: api => {
+    prepare: (api) => {
       Object.assign(global, api);
       for (const file of program.args) {
         require(resolve(process.cwd(), file));

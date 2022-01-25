@@ -15,7 +15,7 @@ Then you can create a file and `bench` functions, for instance if you have a **m
 ```js
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-bench('forEach', () => arr.forEach(v => (sum += v)));
+bench('forEach', () => arr.forEach((v) => (sum += v)));
 
 bench('for-of loop', () => {
   for (const v of arr) {
@@ -50,7 +50,7 @@ Options:
 You can return promises from your benchmarks and take callbacks:
 
 ```js
-bench('plain fs', callback => readFile(__filename, callback));
+bench('plain fs', (callback) => readFile(__filename, callback));
 bench('promisifed fs', async () => await readFileAsync(__filename));
 ```
 
@@ -65,7 +65,7 @@ set('setup', async () => {
 });
 
 // or a callback:
-set('teardown', callback => closePage(callback));
+set('teardown', (callback) => closePage(callback));
 
 // as well as base options:
 set('maxTime', 1);

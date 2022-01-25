@@ -29,22 +29,24 @@ const postAsync = <R = unknown>(method: string, params?: {}) =>
 /**
  * A middleware that runs a CPU profile benchmarks.
  */
-export const cpuProfiler = (
-  onResult: (bench: Readonly<IBenchmarkCase>, profile: object) => Promise<void> | void,
-  include?: string | RegExp,
-): Middleware => async (bench, next) => {
-  if (include && !grepMatches(include, bench.name)) {
-    return next(bench);
-  }
+export const cpuProfiler =
+  (
+    onResult: (bench: Readonly<IBenchmarkCase>, profile: object) => Promise<void> | void,
+    include?: string | RegExp,
+  ): Middleware =>
+  async (bench, next) => {
+    if (include && !grepMatches(include, bench.name)) {
+      return next(bench);
+    }
 
-  if (!enabledProfiler) {
-    enabledProfiler = true;
-    await postAsync('Profiler.enable');
-  }
+    if (!enabledProfiler) {
+      enabledProfiler = true;
+      await postAsync('Profiler.enable');
+    }
 
-  await postAsync('Profiler.start');
-  await next(bench);
+    await postAsync('Profiler.start');
+    await next(bench);
 
-  const { profile } = await postAsync<{ profile: object }>('Profiler.stop');
-  await onResult(bench, profile);
-};
+    const { profile } = await postAsync<{ profile: object }>('Profiler.stop');
+    await onResult(bench, profile);
+  };

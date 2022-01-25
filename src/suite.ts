@@ -10,7 +10,7 @@ export type RunFunction = (name: string, options: Options) => Promise<void>;
 
 const defaultRunFn: RunFunction = (name, options) => {
   const bench = new Benchmark(name, options.fn!, options);
-  const prom = new Promise<void>(resolve => bench.on('complete', resolve));
+  const prom = new Promise<void>((resolve) => bench.on('complete', resolve));
   bench.run();
   return prom;
 };
@@ -31,7 +31,7 @@ const installBenchFn = (fn: MaybeAsync, options: Options) => {
     return options.merge({
       defer: true,
       fn: (deferred: IDeferred) => {
-        fn(err => (err ? deferred.reject(err) : deferred.resolve(undefined)));
+        fn((err) => (err ? deferred.reject(err) : deferred.resolve(undefined)));
       },
     });
   }
@@ -42,7 +42,7 @@ const installBenchFn = (fn: MaybeAsync, options: Options) => {
       fn: (deferred: IDeferred) => {
         fn()!
           .then(() => deferred.resolve(undefined))
-          .catch(err => deferred.reject(err));
+          .catch((err) => deferred.reject(err));
       },
     });
   }
@@ -59,7 +59,7 @@ const runMiddleware = (
     return Promise.resolve();
   }
 
-  return stack[offset](bench, b => runMiddleware(b, stack, offset + 1));
+  return stack[offset](bench, (b) => runMiddleware(b, stack, offset + 1));
 };
 
 /**
@@ -86,7 +86,7 @@ export class MatchaSuite {
     for (const bench of this.benches) {
       await runMiddleware(bench, [
         ...bench.middleware,
-        async bench => {
+        async (bench) => {
           const options = bench.options ?? Options.empty;
           if (options.setup) {
             await runMaybeAsync(options.setup);

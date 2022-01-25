@@ -28,6 +28,6 @@ export const runMaybeAsync = (fn: MaybeAsync) =>
     if (fn.length === 0) {
       resolve(fn(noop));
     } else {
-      fn(err => (err ? reject(err) : resolve()));
+      fn((err) => (err ? reject(err) : resolve()));
     }
   });
