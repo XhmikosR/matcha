@@ -6,7 +6,7 @@ A modernization of [`matcha`](https://github.com/logicalparadox/matcha), powered
 
 ## Usage
 
-```
+```sh
 npm install --global @c4312/matcha
 ```
 
@@ -26,13 +26,13 @@ bench('for-of loop', () => {
 
 Then, simply run:
 
-```
+```sh
 matcha my-bench.js
 ```
 
 ### Command-Line Options
 
-```
+```text
 Usage: matcha [options] <file>
 
 Options:
@@ -50,8 +50,10 @@ Options:
 You can return promises from your benchmarks and take callbacks:
 
 ```js
-bench('plain fs', (callback) => readFile(__filename, callback));
-bench('promisifed fs', async () => await readFileAsync(__filename));
+const fs = require('fs');
+
+bench('plain fs', (callback) => fs.readFileSync(__filename, callback));
+bench('fs promises', async () => await fs.promises.readFile(__filename));
 ```
 
 ## Settings
