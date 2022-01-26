@@ -23,7 +23,6 @@ const program = new Command();
 
 program
   .name('matcha')
-  .arguments('<file>')
   .version(version)
   .option('-g, --grep <pattern>', 'Run a subset of benchmarks', '')
   .option('-R, --reporter <reporter>', 'Specify the reporter to use', 'pretty')
@@ -41,6 +40,7 @@ if (options.reporters) {
 } else if (process.argv.length === 2) {
   program.help();
 } else {
+  program.arguments('<file>');
   benchmarkFiles();
 }
 
