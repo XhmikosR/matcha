@@ -1,5 +1,5 @@
+import { strict as assert } from 'assert';
 import { promisify } from 'util';
-import { expect } from 'chai';
 import { benchmark } from './runner';
 import { IOptions } from './options';
 import { GatherReporter } from './reporters/gather';
@@ -10,7 +10,7 @@ const timeout = promisify(setTimeout);
 const noop = () => {};
 
 // There's really no other test setup I could use for a project
-// called matcha but mocha and chai
+// called matcha but mocha
 
 describe('runner', () => {
   it('sets options correctly', async () => {
@@ -32,11 +32,12 @@ describe('runner', () => {
       },
     });
 
-    expect(results).to.deep.equal([
+    const expected = [
       ['a', { maxTime: 1, initCount: undefined }],
       ['aaa', { maxTime: 1, initCount: undefined }],
       ['aSuite#c', { maxTime: 1, initCount: 100 }],
-    ]);
+    ];
+    assert.deepEqual(results, expected);
   });
 
   it('greps for tests', async () => {
@@ -55,7 +56,7 @@ describe('runner', () => {
       },
     });
 
-    expect(results).to.deep.equal(['a', 'aaa']);
+    assert.deepEqual(results, ['a', 'aaa']);
   });
 
   it('handles lifecycle correctly', async () => {
@@ -106,7 +107,8 @@ describe('runner', () => {
       },
     });
 
-    expect(results).to.deep.equal(['in a', 'in b', 'in c', 'bench', 'out c', 'out b', 'out a']);
+    const expected = ['in a', 'in b', 'in c', 'bench', 'out c', 'out b', 'out a'];
+    assert.deepEqual(results, expected);
   });
 
   it('runs e2e', async function () {
@@ -120,18 +122,19 @@ describe('runner', () => {
       prepare(api) {
         api.set('maxTime', 0.5);
         api.bench('deepEqual', () => {
-          expect(obj1).to.deep.equal(obj2);
+          assert.deepEqual(obj1, obj2);
         });
         api.bench('strictEqual', () => {
-          expect(obj1).to.equal(obj1);
+          assert.equal(obj1, obj1);
         });
       },
     });
 
-    expect(reporter.results).to.have.lengthOf(2);
+    assert.equal(reporter.results.length, 2);
+
     for (const result of reporter.results) {
-      expect(result.error).to.be.undefined;
-      expect(result.hz).to.be.greaterThan(1);
+      assert.equal(typeof result.error, 'undefined');
+      assert.ok(result.hz > 1);
     }
   });
 });
