@@ -1,11 +1,13 @@
 import { strict as assert } from 'assert';
-import { promisify } from 'util';
 import { benchmark } from './runner';
 import { IOptions } from './options';
 import { GatherReporter } from './reporters/gather';
 import { grepMiddleware } from './middleware/grep';
 
-const timeout = promisify(setTimeout);
+const timeout = async (time: number) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, time);
+  });
 
 const noop = () => {};
 
