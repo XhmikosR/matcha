@@ -1,0 +1,11 @@
+{
+  "all": true,
+  "include": [
+    "dist/"
+  ],
+  "reporter": [
+    "html",
+    "lcovonly",
+    "text"
+  ]
+}

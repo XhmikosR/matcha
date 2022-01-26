@@ -20,6 +20,7 @@
     "watch": "tsc --watch",
     "test:fmt": "prettier --list-different \"src/**/*.ts\" example.js \"*.md\"",
     "test:unit": "mocha dist/**/*.test.js",
+    "test:ci": "c8 npm run test:unit && npm run test:fmt",
     "test": "npm run test:unit && npm run test:fmt",
     "fmt": "prettier --write \"src/**/*.ts\" example.js \"*.md\""
   },
@@ -34,6 +35,7 @@
     "@types/benchmark": "^2.1.1",
     "@types/mocha": "^9.1.0",
     "@types/node": "^16.11.26",
+    "c8": "^7.11.0",
     "mocha": "^9.2.1",
     "prettier": "^2.5.1",
     "typescript": "^4.6.2"
