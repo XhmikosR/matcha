@@ -1,6 +1,6 @@
 import { moveCursor, clearLine } from 'readline';
 import { EOL } from 'os';
-import chalk from 'chalk';
+import pc from 'picocolors';
 import { Benchmark, IReporter, IReporterFactory } from '.';
 
 const center = 30;
@@ -19,7 +19,7 @@ export class PrettyReporter implements IReporter {
   }
 
   onStartCycle(benchmark: Benchmark) {
-    this.out.write(chalk.yellow('running > '.padStart(center)) + chalk.gray(benchmark.name));
+    this.out.write(pc.yellow('running > '.padStart(center)) + pc.gray(benchmark.name));
     this.out.write(EOL);
   }
 
@@ -41,12 +41,12 @@ export class PrettyReporter implements IReporter {
       clearLine(this.out, 0);
 
       if (benchmark.error) {
-        this.out.write(chalk.red('error > '.padStart(center)) + chalk.gray(benchmark.name));
+        this.out.write(pc.red('error > '.padStart(center)) + pc.gray(benchmark.name));
       } else {
         const text = benchmark.name + ` (${this.numberFormat.format(benchmark.hz / minHz)}x)`;
         this.out.write(
-          chalk.green(`${this.numberFormat.format(benchmark.hz)} ops/sec > `.padStart(center)) +
-            (benchmark.hz === maxHz ? text : chalk.gray(text)),
+          pc.green(`${this.numberFormat.format(benchmark.hz)} ops/sec > `.padStart(center)) +
+            (benchmark.hz === maxHz ? text : pc.gray(text)),
         );
       }
 
@@ -59,7 +59,7 @@ export class PrettyReporter implements IReporter {
     const error = cases.find((c) => Boolean(c.error));
 
     if (error) {
-      this.out.write(chalk.red(error.error.stack));
+      this.out.write(pc.red(error.error.stack));
       return;
     }
 
@@ -67,9 +67,9 @@ export class PrettyReporter implements IReporter {
     const elapsed = cases.reduce((n, c) => n + c.times.elapsed, 0);
 
     this.out.write(EOL);
-    this.out.write(`  ${chalk.grey('Benches')}: ${cases.length}${EOL}`);
-    this.out.write(`  ${chalk.grey('Fastest')}: ${(cases[0] as any)?.name}${EOL}`);
-    this.out.write(`  ${chalk.grey('Elapsed')}: ${this.numberFormat.format(elapsed)}s${EOL}`);
+    this.out.write(`  ${pc.gray('Benches')}: ${cases.length}${EOL}`);
+    this.out.write(`  ${pc.gray('Fastest')}: ${(cases[0] as any)?.name}${EOL}`);
+    this.out.write(`  ${pc.gray('Elapsed')}: ${this.numberFormat.format(elapsed)}s${EOL}`);
     this.out.write(EOL);
   }
 }
