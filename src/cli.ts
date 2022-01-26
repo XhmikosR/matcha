@@ -3,12 +3,14 @@
 import { resolve } from 'path';
 import { promises as fs } from 'fs';
 import { EOL } from 'os';
-import program from 'commander';
+import { Command } from 'commander';
 import { reporters } from './reporters';
 import { benchmark, Middleware } from './runner';
 import { grepMiddleware } from './middleware/grep';
 import { cpuProfiler } from './middleware/cpu-profiler';
 import { IBenchmarkCase } from './suite';
+
+const { version } = require('../package.json');
 
 interface IArgs {
   reporters?: boolean;
@@ -17,11 +19,11 @@ interface IArgs {
   cpuProfile?: string | true;
 }
 
-const { version } = require('../package.json');
+const program = new Command();
 
-const args = program
-  .arguments('<file>')
+program
   .name('matcha')
+  .arguments('<file>')
   .version(version)
   .option('-g, --grep <pattern>', 'Run a subset of benchmarks', '')
   .option('-R, --reporter <reporter>', 'Specify the reporter to use', 'pretty')
@@ -30,12 +32,13 @@ const args = program
     'Run on all tests, or those matching the regex. Saves a .cpuprofile file that can be opened in the Chrome devtools.',
   )
   .option('--reporters', 'Display available reporters')
-  .parse(process.argv)
-  .opts() as IArgs;
+  .parse(process.argv);
 
-if (args.reporters) {
+const options = program.opts() as IArgs;
+
+if (options.reporters) {
   printReporters();
-} else if (program.args.length === 0) {
+} else if (process.argv.length === 2) {
   program.help();
 } else {
   benchmarkFiles();
@@ -43,22 +46,22 @@ if (args.reporters) {
 
 function benchmarkFiles() {
   const reporterFactory =
-    typeof args.reporter === 'string' ? reporters[args.reporter] : args.reporter;
+    typeof options.reporter === 'string' ? reporters[options.reporter] : options.reporter;
 
   if (!reporterFactory) {
-    console.error(`Unknown reporter ${args.reporter}`);
+    console.error(`Unknown reporter ${options.reporter}`);
     program.help();
   }
 
   const middleware: Middleware[] = [];
-  if (args.grep) {
-    middleware.push(grepMiddleware(new RegExp(args.grep, 'i')));
+  if (options.grep) {
+    middleware.push(grepMiddleware(new RegExp(options.grep, 'i')));
   }
 
-  if (args.cpuProfile === true) {
+  if (options.cpuProfile === true) {
     middleware.push(cpuProfiler(writeProfile));
-  } else if (args.cpuProfile) {
-    middleware.push(cpuProfiler(writeProfile, new RegExp(args.cpuProfile, 'i')));
+  } else if (options.cpuProfile) {
+    middleware.push(cpuProfiler(writeProfile, new RegExp(options.cpuProfile, 'i')));
   }
 
   benchmark({
