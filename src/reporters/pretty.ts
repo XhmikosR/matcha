@@ -11,7 +11,7 @@ export const prettyFactory: IReporterFactory = {
 };
 
 export class PrettyReporter implements IReporter {
-  private readonly numberFormat = Intl.NumberFormat('en-US', { maximumSignificantDigits: 3 });
+  private readonly numberFormat = Intl.NumberFormat(undefined, { maximumSignificantDigits: 3 });
   private readonly results: Benchmark[] = [];
 
   constructor(private readonly out: NodeJS.WriteStream) {
