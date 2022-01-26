@@ -13,9 +13,6 @@
     "sourceMap": true,
     "strict": true,
     "target": "es2019",
-    "types": [
-      "node",
-      "mocha"
-    ]
+    "types": ["node", "mocha"]
   }
 }
