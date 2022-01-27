@@ -10,6 +10,7 @@ import { grepMiddleware } from './middleware/grep';
 import { cpuProfiler } from './middleware/cpu-profiler';
 import { IBenchmarkCase } from './suite';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const { version } = require('../package.json');
 
 interface IArgs {

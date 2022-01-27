@@ -15,7 +15,7 @@ const getSession = () => {
   return session;
 };
 
-const postAsync = async <R = unknown>(method: string, params?: {}) => {
+const postAsync = async <R = unknown>(method: string, params?: Record<string, unknown>) => {
   return new Promise<R>((resolve, reject) => {
     getSession().post(method, params, (err, result) => {
       if (err) {

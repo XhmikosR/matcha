@@ -9,6 +9,7 @@ const timeout = async (time: number) =>
     setTimeout(resolve, time);
   });
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 // There's really no other test setup I could use for a project

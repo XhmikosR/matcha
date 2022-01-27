@@ -10,6 +10,7 @@ export interface IDeferred<T = void> {
   reject(err: Error): void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-function
 const noop = () => {};
 
 export const returnsPromiseLike = (fn: MaybeAsync): fn is () => Promise<void> => {

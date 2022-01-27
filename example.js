@@ -5,7 +5,7 @@
 set('maxTime', 1);
 
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-let sum = 0;
+let sum = 0; // eslint-disable-line no-unused-vars
 
 bench('forEach', () => arr.forEach((v) => (sum ^= v)));
 
