@@ -14,8 +14,13 @@ Then you can create a file and `bench` functions, for instance if you have a **m
 
 ```js
 const arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+let sum = 0;
 
-bench('forEach', () => arr.forEach((v) => (sum += v)));
+bench('forEach', () => {
+  arr.forEach((v) => {
+    sum += v;
+  });
+});
 
 bench('for-of loop', () => {
   for (const v of arr) {
