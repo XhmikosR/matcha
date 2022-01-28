@@ -46,7 +46,7 @@ export class PrettyReporter implements IReporter {
         const text = benchmark.name + ` (${this.numberFormat.format(benchmark.hz / minHz)}x)`;
         this.out.write(
           pc.green(`${this.numberFormat.format(benchmark.hz)} ops/sec > `.padStart(center)) +
-            (benchmark.hz === maxHz ? text : pc.gray(text)),
+            (benchmark.hz === maxHz ? pc.bold(text) : pc.gray(text)),
         );
       }
 
@@ -68,7 +68,7 @@ export class PrettyReporter implements IReporter {
 
     this.out.write(EOL);
     this.out.write(`  ${pc.gray('Benches')}: ${cases.length}${EOL}`);
-    this.out.write(`  ${pc.gray('Fastest')}: ${(cases[0] as any)?.name}${EOL}`);
+    this.out.write(`  ${pc.gray('Fastest')}: ${pc.bold((cases[0] as any)?.name)}${EOL}`);
     this.out.write(`  ${pc.gray('Elapsed')}: ${this.numberFormat.format(elapsed)}s${EOL}`);
     this.out.write(EOL);
   }
