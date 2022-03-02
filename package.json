@@ -28,7 +28,7 @@
     "lint": "eslint . --ignore-path .gitignore --report-unused-disable-directives --ext .js,.ts",
     "prettier-cli": "prettier . --ignore-path .gitignore",
     "test:fmt": "npm run prettier-cli -- --list-different",
-    "test:unit": "mocha dist/**/*.test.js",
+    "test:unit": "mocha \"dist/**/*.test.js\"",
     "test:ci": "c8 npm run test:unit && npm run lint && npm run test:fmt",
     "test": "npm run test:unit && npm run lint && npm run test:fmt",
     "fmt": "npm run prettier-cli -- --write"
