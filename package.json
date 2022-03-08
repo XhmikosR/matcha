@@ -31,7 +31,8 @@
     "test:unit": "mocha \"dist/**/*.test.js\"",
     "test:ci": "c8 npm run test:unit && npm run lint && npm run test:fmt",
     "test": "npm run test:unit && npm run lint && npm run test:fmt",
-    "fmt": "npm run prettier-cli -- --write"
+    "fmt": "npm run prettier-cli -- --write",
+    "example": "node dist/cli.js example.js"
   },
   "author": "Connor Peet <connor@peet.io>",
   "license": "MIT",

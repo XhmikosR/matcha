@@ -38,4 +38,4 @@ jobs:
         run: npm run test:ci
 
       - name: Run example
-        run: node dist/cli.js example.js
+        run: npm run example
